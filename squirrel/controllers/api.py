@@ -1,6 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from db import cache, persis
+from db.cache import cache
+from db.persis import persis
+from db.rds import rds
+from squirrel.utils import USER_CACHE_MAX
+from worker import producer_sync_job
+
+
+def check_cached_record(user_id, cur_num):
+    if cur_num > USER_CACHE_MAX:
+        producer_sync_job(user_id)
+        return 0
+    return cur_num
 
 
 class record_db(object):
@@ -9,6 +20,8 @@ class record_db(object):
     def set(self, user_id, timestamp, records):
         cache.insert(user_id, timestamp=timestamp,
                      doc=records)
+        rds.update_record(user_id, len(records),
+                          callback=check_cached_record)
 
     @classmethod
     def get(self, user_id, endtime, top):

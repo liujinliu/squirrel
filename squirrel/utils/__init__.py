@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 
+USER_CACHE_MAX = 1000
 MONTH_FMT = '%Y/%m'
 DAY_FMT = '%Y/%m/%d'
+
 
 def month_last(month_str):
     day_str = '%s/10' % month_str
