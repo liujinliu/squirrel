@@ -11,7 +11,7 @@ define('debug', default=False, help='debug option')
 
 def main():
     options.parse_command_line()
-    from squirrel.api.v1.urls import urls
+    from api.v1.urls import urls
     from tornado.web import Application
     import tornado.ioloop
     app = Application(urls, debug=options.debug)
@@ -22,3 +22,6 @@ def main():
     rds.connect()
     ioloop.spawn_callback(sync_record_data)
     ioloop.start()
+
+if __name__ == '__main__':
+    main()
