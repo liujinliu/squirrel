@@ -77,9 +77,10 @@ class mysqldb(object):
                 cur_num = ret.get('cache', 0) + incr_num
                 if callback:
                     cur_num = callback(user_id, cur_num)
-            sql = ('UPDATE active_records SET cache={cur_num} '
-                   'WHERE user_id="{user_id}"').format(cur_num=cur_num,
-                                                       user_id=user_id)
+            sql = ('INSERT INTO active_records (user_id, cache) '
+                   'VALUES ("{user_id}",{cur_num}) ON DUPLICATE KEY '
+                   'UPDATE cache={cur_num}').format(user_id=user_id,
+                                                    cur_num=cur_num)
             cursor.execute(sql)
             self.commit()
         except Exception as e:
@@ -94,6 +95,6 @@ if __name__ == '__main__':
         print(user_id, cur_num)
         return cur_num
     import time
-    print('sleep for 15 s.....')
-    time.sleep(15)
-    m.update_record_num('abcde1230', 4, callback=callback)
+    print('sleep for 3 s.....')
+    time.sleep(3)
+    m.update_record_num('abcde1233', 4, callback=callback)
