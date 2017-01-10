@@ -12,7 +12,7 @@ def _setup():
         author_email='liujinliu@lbesec.com',
         url='',
         install_requires=['tornado', 'boto3', 'futures',
-                          'MySQLdb'],
+                          'MySQL-python'],
         packages=find_packages('src'),
         package_dir={'': 'src'},
         entry_points={
