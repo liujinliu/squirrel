@@ -7,9 +7,9 @@ from squirrel.utils import USER_CACHE_MAX
 from worker import producer_sync_job
 
 
-def check_cached_record(user_id, cur_num):
+def check_cached_record(user_id, cur_num, timestamp):
     if cur_num > USER_CACHE_MAX:
-        producer_sync_job(user_id)
+        producer_sync_job(user_id, timestamp)
         return 0
     return cur_num
 
@@ -20,7 +20,7 @@ class record_db(object):
     def set(self, user_id, timestamp, records):
         cache.insert(user_id, timestamp=timestamp,
                      doc=records)
-        rds.update_record(user_id, len(records),
+        rds.update_record(user_id, len(records), timestamp,
                           callback=check_cached_record)
 
     @classmethod

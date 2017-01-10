@@ -12,6 +12,8 @@ class rds(object):
         self.rds_db = rds_db(*args, **kargs)
 
     @classmethod
-    def update_record(self, user_id, incr_num, callback=None):
-        LOG.info('update %s snum by %d' % (user_id, incr_num))
-        self.rds_db.update_record_num(user_id, incr_num, callback)
+    def update_record(self, user_id, incr_num, timestamp, callback=None):
+        LOG.info('update %s snum by %d , timestamp:%d'
+                 % (user_id, incr_num, timestamp))
+        self.rds_db.update_record_num(user_id, incr_num,
+                                      timestamp, callback)

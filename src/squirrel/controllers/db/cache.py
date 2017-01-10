@@ -21,7 +21,6 @@ class cache(object):
         if not endtime:
             endtime = time.mktime(datetime.now().timetuple())
         docs = self.cache_db.select(user_id, endtime)
-        print(docs)
         for doc in docs:
             doc['doc'] = json.loads(doc['doc'])
         if len(docs) >= top:

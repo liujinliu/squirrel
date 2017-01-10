@@ -5,7 +5,6 @@ import logging
 import functools
 from MySQLdb import OperationalError
 from MySQLdb.cursors import DictCursor
-# from contextlib import contextmanager
 
 LOG = logging.getLogger(__name__)
 
@@ -64,7 +63,8 @@ class mysqldb(object):
         self.conn.rollback()
 
     @handle_connection_loss
-    def update_record_num(self, user_id, incr_num, callback=None):
+    def update_record_num(self, user_id, incr_num,
+                          timestamp, callback=None):
         cursor = self.cursor
         sql = ('SELECT cache FROM active_records '
                'WHERE user_id="{user_id}" '
@@ -76,11 +76,13 @@ class mysqldb(object):
             if ret:
                 cur_num = ret.get('cache', 0) + incr_num
                 if callback:
-                    cur_num = callback(user_id, cur_num)
-            sql = ('INSERT INTO active_records (user_id, cache) '
-                   'VALUES ("{user_id}",{cur_num}) ON DUPLICATE KEY '
-                   'UPDATE cache={cur_num}').format(user_id=user_id,
-                                                    cur_num=cur_num)
+                    cur_num = callback(user_id, cur_num, timestamp)
+            sql = ('INSERT INTO active_records (user_id, utime, cache) '
+                   'VALUES ("{user_id}",{utime},{cur_num}) ON DUPLICATE KEY '
+                   'UPDATE cache={cur_num}, utime={utime}').format(
+                       user_id=user_id, cur_num=cur_num,
+                       utime=timestamp
+                   )
             cursor.execute(sql)
             self.commit()
         except Exception as e:
@@ -91,10 +93,10 @@ class mysqldb(object):
 if __name__ == '__main__':
     m = mysqldb()
 
-    def callback(user_id, cur_num):
-        print(user_id, cur_num)
+    def callback(user_id, cur_num, timestamp):
+        print(user_id, cur_num, timestamp)
         return cur_num
     import time
     print('sleep for 3 s.....')
     time.sleep(3)
-    m.update_record_num('abcde1233', 4, callback=callback)
+    m.update_record_num('abcde1233', 4, 1484038961, callback=callback)
