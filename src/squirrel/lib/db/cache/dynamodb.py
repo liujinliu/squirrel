@@ -54,7 +54,7 @@ class cache_db(object):
             TableName=self.table_name)
 
     def insert(self, user_id, timestamp, doc):
-        self.table.put_item(
+        self.record_tb.put_item(
             Item={
                     self.partition_key: user_id,
                     self.sort_key: timestamp,
@@ -63,7 +63,11 @@ class cache_db(object):
         )
 
     def select(self, user_id, endtime):
-        response = self.table.query(
+        response = self.record_tb.query(
             KeyConditionExpression=Key(self.partition_key).eq(user_id) &
             Key(self.sort_key).lt(endtime))
-        return response['Items']
+        return response['Items'][::-1]
+
+if __name__ == '__main__':
+    dy = cache_db(endpoint_url='http://localhost:8000')
+    print(dy.select('abcdeliujinliu', 1484036749))

@@ -28,6 +28,8 @@ class record_db(object):
         cache_records = cache.select(user_id,
                                      endtime=endtime,
                                      top=top)
+        ret = []
+        list(map(lambda x: ret.extend(x.get('doc', [])), cache_records))
         len_cache = len(cache_records)
         if len_cache < top:
             newend = endtime
@@ -36,5 +38,5 @@ class record_db(object):
             persis_records = persis.select(user_id,
                                            endtime=newend,
                                            top=top-len_cache)
-            cache_records.extend(persis_records)
-        return cache_records
+            ret.extend(list(map(lambda x: x.get('doc', []), persis_records)))
+        return ret

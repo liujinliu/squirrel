@@ -22,12 +22,14 @@ class persis(object):
     def select(self, user_id, endtime, top):
         value = datetime.utcfromtimestamp(endtime)
         utc_month = datetime.strftime(value, MONTH_FMT)
+        min_month = datetime.strptime('2010/01', MONTH_FMT)
         ret = []
-        while len(ret) < top:
+        while len(ret) < top and min_month < datetime.strptime(utc_month,
+                                                               MONTH_FMT):
             for tmp in self.persis_db.select(user_id, utc_month):
                 if not tmp:
                     break
-                ret.extend(json.loads(tmp))
+                ret.extend(dict(doc=json.loads(tmp)))
             utc_month = month_last(utc_month)
         if len(ret) > top:
             return ret[0:top]

@@ -38,7 +38,7 @@ class RecordHandler(BaseHandler):
                       records=self.records
                   ))
         yield thread_pool.submit(record_db.set, self.user_id,
-                                 self.timestamp, self.records)
+                                 int(self.timestamp), self.records)
 
     @coroutine
     def get(self):
@@ -57,5 +57,5 @@ class RecordHandler(BaseHandler):
                       top=self.top
                   ))
         ret = yield thread_pool.submit(record_db.get, self.user_id,
-                                       self.endtime, self.top)
+                                       int(self.endtime), int(self.top))
         self.write(dict(records=ret))

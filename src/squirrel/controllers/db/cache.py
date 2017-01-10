@@ -21,10 +21,17 @@ class cache(object):
         if not endtime:
             endtime = time.mktime(datetime.now().timetuple())
         docs = self.cache_db.select(user_id, endtime)
-        ret = json.loads(docs)
-        if len(ret) >= top:
-            return ret[0:top]
+        print(docs)
+        for doc in docs:
+            doc['doc'] = json.loads(doc['doc'])
+        if len(docs) >= top:
+            return docs[0:top]
         else:
-            return ret
+            return docs
 
 cache = cache()
+
+if __name__ == '__main__':
+    cache.connect(endpoint_url='http://localhost:8000')
+    ret = cache.select('abcdeliujinliu', 1484036749, 10)
+    print(ret)
