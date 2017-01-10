@@ -22,6 +22,12 @@ local_install: build
 	virtualenv --no-site-packages dist/tmp
 	. dist/tmp/bin/activate && pip install dist/*.whl -U	
 
+local_start: build
+	virtualenv --no-site-packages dist/tmp
+	. dist/tmp/bin/activate && pip install dist/*.whl -U
+	. dist/tmp/bin/activate && squirrel-start
+
+
 install_whl: install
 
 deploy:
