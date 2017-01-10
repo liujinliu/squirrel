@@ -17,7 +17,7 @@ def main():
     app = Application(urls, debug=options.debug)
     app.listen(options.port)
     ioloop = tornado.ioloop.IOLoop.instance()
-    cache.connect()
+    cache.connect(endpoint_url='http://localhost:8000')
     persis.connect()
     rds.connect()
     ioloop.spawn_callback(sync_record_data)

@@ -11,14 +11,16 @@ build_egg: clean
 install_egg: build_egg
 	easy_install dist/*.egg
 
-local_install: install_egg
-
 build: clean
 	python setup.py build_py bdist_wheel
 	cp Makefile dist
 
 install: build
 	pip install dist/*.whl -U
+
+local_install: build
+	virtualenv --no-site-packages dist/tmp
+	. dist/tmp/bin/activate && pip install dist/*.whl -U	
 
 install_whl: install
 

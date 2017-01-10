@@ -10,7 +10,8 @@ LOG = logging.getLogger(__name__)
 
 
 class persis_db(object):
-    def __init__(self, base_path, *args, **kargs):
+    def __init__(self, base_path='/home/liujinliu/working/tmpfiles',
+                 *args, **kargs):
         self.base_path = base_path
         self.valuefile = 'value'
 
