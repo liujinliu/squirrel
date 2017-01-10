@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-from squirrel.lib.db.rds import mysql
+from squirrel.lib.db.rds.mysql import mysqldb
 
 LOG = logging.getLogger(__name__)
 
@@ -8,7 +8,7 @@ LOG = logging.getLogger(__name__)
 class rds(object):
 
     @classmethod
-    def connect(self, rds_db=mysql, *args, **kargs):
+    def connect(self, rds_db=mysqldb, *args, **kargs):
         self.rds_db = rds_db(*args, **kargs)
 
     @classmethod

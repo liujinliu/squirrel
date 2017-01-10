@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
-from squirrel.lib.db.localfile import persis_db
+from squirrel.lib.db.persis.localfile import persis_db
 from squirrel.utils import MONTH_FMT, month_last
 from datetime import datetime
 
