@@ -90,6 +90,7 @@ class RdsDb(object):
             self.rollback()
             raise
 
+    @handle_connection_loss
     def update_sync(self, user_id, snum, stime):
         cursor = self.cursor
         sql = ('UPDATE active_records SET snum={snum}, '

@@ -15,6 +15,9 @@ sync_records_thread = ThreadPoolExecutor(1)
 
 
 def do_sync_records(user_id, timestamp):
+    Rds.connect()
+    LOG.info('sync %s data to persis storage begin, timestamp:%d'
+             % (user_id, timestamp))
     LOG.info('got all records of %s, timestamp:%d'
              % (user_id, timestamp))
     cache_records = Cache.select(user_id, timestamp,
@@ -30,14 +33,6 @@ def do_sync_records(user_id, timestamp):
     LOG.info('update record in rds user_id:%s, timestamp:%d'
              % (user_id, timestamp))
     Rds.update_sync_state(user_id, len(records), timestamp)
-
-
-@gen.coroutine
-def sync_records(user_id, timestamp):
-    LOG.info('sync %s data to persis storage begin, timestamp:%d'
-             % (user_id, timestamp))
-    yield sync_records_thread.submit(do_sync_records,
-                                     user_id, timestamp)
     LOG.info('sync %s data to persis storage finish, timestamp:%d'
              % (user_id, timestamp))
 
@@ -51,8 +46,8 @@ def sync_record_data():
         try:
             LOG.info('submit to sync user %s, timestamp:%d'
                      % (user_id, timestamp))
-            yield thread_pool.submit(sync_records, user_id,
-                                     timestamp)
+            yield sync_records_thread.submit(do_sync_records, user_id,
+                                             timestamp)
         finally:
             q.task_done()
 
