@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
-from squirrel.lib.db.persis.localfile import persis_db
+from squirrel.lib.db.persis.localfile import PersisDb
 from squirrel.utils import MONTH_FMT, month_last
 from datetime import datetime
 
 LOG = logging.getLogger(__name__)
 
 
-class persis(object):
+class Persis(object):
 
-    def connect(self, persis_db=persis_db, *args, **kargs):
+    def connect(self, persis_db=PersisDb, *args, **kargs):
         self.persis_db = persis_db(*args, **kargs)
 
     def insert(self, user_id, date=None, doc=None):
@@ -35,4 +35,4 @@ class persis(object):
             return ret[0:top]
         return ret
 
-persis = persis()
+Persis = Persis()

@@ -2,12 +2,12 @@
 import time
 import json
 from datetime import datetime
-from squirrel.lib.db.cache.dynamodb import cache_db
+from squirrel.lib.db.cache.dynamodb import CacheDb
 
 
-class cache(object):
+class Cache(object):
 
-    def connect(self, cache_db=cache_db, *args, **kargs):
+    def connect(self, cache_db=CacheDb, *args, **kargs):
         self.cache_db = cache_db(*args, **kargs)
 
     def insert(self, user_id, timestamp=None, doc=None):
@@ -28,9 +28,9 @@ class cache(object):
         else:
             return docs
 
-cache = cache()
+Cache = Cache()
 
 if __name__ == '__main__':
-    cache.connect(endpoint_url='http://localhost:8000')
-    ret = cache.select('abcdeliujinliu', 1484036749, 10)
+    Cache.connect(endpoint_url='http://localhost:8000')
+    ret = Cache.select('abcdeliujinliu', 1484036749, 10)
     print(ret)

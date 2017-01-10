@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from tornado.options import define, options
-from controllers.db.cache import cache
-from controllers.db.persis import persis
-from controllers.db.rds import rds
+from controllers.db.cache import Cache
+from controllers.db.persis import Persis
+from controllers.db.rds import Rds
 from controllers.worker import sync_record_data
 define('port', default=9999, type=int, help='app listen port')
 define('debug', default=False, help='debug option')
@@ -17,9 +17,9 @@ def main():
     app = Application(urls, debug=options.debug)
     app.listen(options.port)
     ioloop = tornado.ioloop.IOLoop.instance()
-    cache.connect(endpoint_url='http://localhost:8000')
-    persis.connect()
-    rds.connect()
+    Cache.connect(endpoint_url='http://localhost:8000')
+    Persis.connect()
+    Rds.connect()
     ioloop.spawn_callback(sync_record_data)
     ioloop.start()
 

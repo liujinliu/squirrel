@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from tornado.gen import coroutine, Return
 from base import BaseHandler
 from err_code import INVALID_PARA
-from squirrel.controllers.api import record_db
+from squirrel.controllers.api import RecordDb
 
 LOG = logging.getLogger(__name__)
 thread_pool = ThreadPoolExecutor(8)
@@ -37,7 +37,7 @@ class RecordHandler(BaseHandler):
                       user_id=self.user_id, timestamp=self.timestamp,
                       records=self.records
                   ))
-        yield thread_pool.submit(record_db.set, self.user_id,
+        yield thread_pool.submit(RecordDb.set, self.user_id,
                                  int(self.timestamp), self.records)
 
     @coroutine
@@ -56,6 +56,6 @@ class RecordHandler(BaseHandler):
                       user_id=self.user_id, endtime=self.endtime,
                       top=self.top
                   ))
-        ret = yield thread_pool.submit(record_db.get, self.user_id,
+        ret = yield thread_pool.submit(RecordDb.get, self.user_id,
                                        int(self.endtime), int(self.top))
         self.write(dict(records=ret))

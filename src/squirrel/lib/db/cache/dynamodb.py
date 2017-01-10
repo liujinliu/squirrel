@@ -7,7 +7,7 @@ from boto3.dynamodb.conditions import Key
 LOG = logging.getLogger(__name__)
 
 
-class cache_db(object):
+class CacheDb(object):
 
     def __init__(self, *args, **kargs):
         self.db = boto3.resource(
@@ -69,5 +69,5 @@ class cache_db(object):
         return response['Items'][::-1]
 
 if __name__ == '__main__':
-    dy = cache_db(endpoint_url='http://localhost:8000')
+    dy = CacheDb(endpoint_url='http://localhost:8000')
     print(dy.select('abcdeliujinliu', 1484036749))

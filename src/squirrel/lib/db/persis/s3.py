@@ -7,7 +7,7 @@ import StringIO
 LOG = logging.getLogger(__name__)
 
 
-class persis_db(object):
+class PersisDb(object):
     def __init__(self, *args, **kargs):
         self.s3 = boto3.resource('s3')
 

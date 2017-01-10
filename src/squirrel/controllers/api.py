@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from db.cache import cache
-from db.persis import persis
-from db.rds import rds
+from db.cache import Cache
+from db.persis import Persis
+from db.rds import Rds
 from squirrel.utils import USER_CACHE_MAX
 from worker import producer_sync_job
 
@@ -14,18 +14,18 @@ def check_cached_record(user_id, cur_num, timestamp):
     return cur_num
 
 
-class record_db(object):
+class RecordDb(object):
 
     @classmethod
     def set(self, user_id, timestamp, records):
-        cache.insert(user_id, timestamp=timestamp,
+        Cache.insert(user_id, timestamp=timestamp,
                      doc=records)
-        rds.update_record(user_id, len(records), timestamp,
+        Rds.update_record(user_id, len(records), timestamp,
                           callback=check_cached_record)
 
     @classmethod
     def get(self, user_id, endtime, top):
-        cache_records = cache.select(user_id,
+        cache_records = Cache.select(user_id,
                                      endtime=endtime,
                                      top=top)
         ret = []
@@ -35,7 +35,7 @@ class record_db(object):
             newend = endtime
             if len_cache > 0:
                 newend = cache_records[-1].get('timestamp', None)
-            persis_records = persis.select(user_id,
+            persis_records = Persis.select(user_id,
                                            endtime=newend,
                                            top=top-len_cache)
             ret.extend(list(map(lambda x: x.get('doc', []), persis_records)))

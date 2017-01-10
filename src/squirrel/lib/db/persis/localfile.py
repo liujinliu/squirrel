@@ -9,7 +9,7 @@ from os import makedirs, listdir
 LOG = logging.getLogger(__name__)
 
 
-class persis_db(object):
+class PersisDb(object):
     def __init__(self, base_path='/home/liujinliu/working/tmpfiles',
                  *args, **kargs):
         self.base_path = base_path
