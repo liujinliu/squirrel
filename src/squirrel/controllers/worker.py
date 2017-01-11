@@ -6,7 +6,6 @@ from tornado.queues import Queue
 from concurrent.futures import ThreadPoolExecutor
 from db.cache import Cache
 from db.persis import Persis
-from db.rds import Rds
 from squirrel.utils import USER_CACHE_MAX, DAY_FMT
 q = Queue(maxsize=1000)
 LOG = logging.getLogger(__name__)
@@ -15,7 +14,6 @@ sync_records_thread = ThreadPoolExecutor(1)
 
 
 def do_sync_records(user_id, timestamp):
-    Rds.connect()
     LOG.info('sync %s data to persis storage begin, timestamp:%d'
              % (user_id, timestamp))
     LOG.info('got all records of %s, timestamp:%d'
@@ -32,7 +30,6 @@ def do_sync_records(user_id, timestamp):
     Persis.insert(user_id, dt, records)
     LOG.info('update record in rds user_id:%s, timestamp:%d'
              % (user_id, timestamp))
-    Rds.update_sync_state(user_id, len(records), timestamp)
     LOG.info('sync %s data to persis storage finish, timestamp:%d'
              % (user_id, timestamp))
 

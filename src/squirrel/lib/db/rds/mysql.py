@@ -52,7 +52,6 @@ class RdsDb(object):
                 self.conn = self._conn()
                 return func(self, *args, **kwargs)
             except Exception as e:
-                LOG.error(e, exc_info=True)
                 raise
         return call
 
@@ -69,6 +68,7 @@ class RdsDb(object):
         sql = ('SELECT cache FROM active_records '
                'WHERE user_id="{user_id}" '
                'FOR UPDATE').format(user_id=user_id)
+        sync_flag = False
         try:
             cursor.execute(sql)
             ret = cursor.fetchone()
@@ -76,27 +76,23 @@ class RdsDb(object):
             if ret:
                 cur_num = ret.get('cache', 0) + incr_num
                 if callback:
-                    cur_num = callback(user_id, cur_num, timestamp)
-            sql = ('INSERT INTO active_records (user_id, utime, cache) '
-                   'VALUES ("{user_id}",{utime},{cur_num}) ON DUPLICATE KEY '
-                   'UPDATE cache={cur_num}, utime={utime}').format(
-                       user_id=user_id, cur_num=cur_num,
-                       utime=timestamp
-                   )
-            cursor.execute(sql)
-            self.commit()
-        except Exception as e:
-            LOG.error(e, exc_info=True)
-            self.rollback()
-            raise
-
-    @handle_connection_loss
-    def update_sync(self, user_id, snum, stime):
-        cursor = self.cursor
-        sql = ('UPDATE active_records SET snum={snum}, '
-               'stime={stime} WHERE user_id="{user_id}"').format(
-                   user_id=user_id, snum=snum, stime=stime)
-        try:
+                    sync_flag = callback(user_id, cur_num, timestamp)
+            if sync_flag:
+                cur_num = 0
+                sql = ('INSERT INTO active_records (user_id, utime, cache, '
+                       'stime) VALUES ("{user_id}",{utime},{cur_num}, '
+                       '{stime}) ON DUPLICATE KEY UPDATE cache={cur_num}, '
+                       'utime={utime}, stime={stime}').format(user_id=user_id,
+                                                              cur_num=cur_num,
+                                                              utime=timestamp,
+                                                              stime=timestamp)
+            else:
+                sql = ('INSERT INTO active_records (user_id, utime, cache) '
+                       'VALUES ("{user_id}",{utime},{cur_num}) ON '
+                       'DUPLICATE KEY UPDATE cache={cur_num}, '
+                       'utime={utime}').format(user_id=user_id,
+                                               cur_num=cur_num,
+                                               utime=timestamp)
             cursor.execute(sql)
             self.commit()
         except Exception as e:
@@ -113,5 +109,4 @@ if __name__ == '__main__':
     import time
     print('sleep for 3 s.....')
     time.sleep(3)
-    # m.update_record_num('abcde1233', 4, 1484038961, callback=callback)
-    m.update_sync('abcde1233', 11, 1484038961)
+    m.update_record_num('abcde1233', 4, 1484038961, callback=callback)

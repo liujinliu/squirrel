@@ -16,11 +16,6 @@ class Rds(object):
         self.rds_db.update_record_num(user_id, incr_num,
                                       timestamp, callback)
 
-    def update_sync_state(self, user_id, snum, stime):
-        LOG.info('update %s snum by %d , stime:%d'
-                 % (user_id, snum, stime))
-        self.rds_db.update_sync(user_id, snum, stime)
-
 Rds = Rds()
 
 if __name__ == '__main__':

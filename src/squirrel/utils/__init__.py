@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 
-USER_CACHE_MAX = 1000
+USER_CACHE_MAX = 10
 MONTH_FMT = '%Y/%m'
 DAY_FMT = '%Y/%m/%d'
 
